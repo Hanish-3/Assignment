@@ -1,0 +1,5 @@
+package com.example.route_service.service;
+
+public class KafkaProducerService {
+
+}

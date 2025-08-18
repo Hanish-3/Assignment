@@ -1,0 +1,5 @@
+package com.example.route_service.exception;
+
+public class ResourceNotFoundException {
+
+}

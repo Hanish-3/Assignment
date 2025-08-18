@@ -1,0 +1,76 @@
+package com.example.route_service.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.route_service.model.Route;
+import com.example.route_service.service.RouteService;
+
+@RestController
+@RequestMapping("/routes")
+public class RouteController {
+
+    private final RouteService routeService;
+
+    @Autowired
+    public RouteController(RouteService routeService) {
+        this.routeService = routeService;
+    }
+
+    /** ✅ Create a new route */
+    @PostMapping
+    public ResponseEntity<Route> createRoute(@RequestBody Route route) {
+        Route savedRoute = routeService.createRoute(route);
+        return new ResponseEntity<>(savedRoute, HttpStatus.CREATED);
+    }
+
+    /** ✅ Update an existing route */
+    @PutMapping("/{id}")
+    public ResponseEntity<Route> updateRoute(@PathVariable("id") Long id, @RequestBody Route route) {
+        Route updated = routeService.updateRoute(id, route);
+        if (updated != null) {
+            return new ResponseEntity<>(updated, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    /** ✅ Delete a route by ID */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRoute(@PathVariable("id") Long id) {
+        routeService.deleteRoute(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /** ✅ Get route by ID */
+    @GetMapping("/{id}")
+    public ResponseEntity<Route> getRouteById(@PathVariable("id") Long id) {
+        Optional<Route> route = routeService.getRouteById(id);
+        return route.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    /** ✅ Get all routes */
+    @GetMapping
+    public ResponseEntity<List<Route>> getAllRoutes() {
+        List<Route> routes = routeService.getAllRoutes();
+        return new ResponseEntity<>(routes, HttpStatus.OK);
+    }
+
+    /** ✅ Get route by source & destination */
+    @GetMapping("/search")
+    public ResponseEntity<Route> getRouteBySourceAndDestination(
+            @RequestParam("source") String source,
+            @RequestParam("destination") String destination) {
+
+        Route route = routeService.getRouteBySourceAndDestination(source, destination);
+        if (route != null) {
+            return new ResponseEntity<>(route, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+}

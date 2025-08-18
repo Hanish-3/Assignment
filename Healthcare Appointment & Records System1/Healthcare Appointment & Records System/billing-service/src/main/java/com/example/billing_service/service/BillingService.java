@@ -1,0 +1,70 @@
+    package com.example.billing_service.service;
+
+    import com.example.billing_service.dto.AppointmentEvent;
+    import com.example.billing_service.model.Invoice;
+    import com.example.billing_service.repository.InvoiceRepository;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.kafka.annotation.KafkaListener;
+    import org.springframework.stereotype.Service;
+    
+
+    import java.time.LocalDateTime;
+    import java.util.List;
+    import java.util.Optional;
+    import java.util.Random;
+
+    @Service
+    public class BillingService {
+        @Autowired
+        private InvoiceRepository invoiceRepository;
+
+        public Invoice createInvoice(Long patientId, Long appointmentId, Double amount) {
+            Invoice invoice = new Invoice();
+            invoice.setPatientId(patientId);
+            invoice.setAppointmentId(appointmentId);
+            invoice.setAmount(amount);
+            invoice.setStatus("PENDING");
+            invoice.setInvoiceDate(LocalDateTime.now());
+            invoice.setInsuranceClaimStatus("NOT_SUBMITTED");
+            return invoiceRepository.save(invoice);
+        }
+
+        public Optional<Invoice> getInvoiceById(Long id) {
+            return invoiceRepository.findById(id);
+        }
+
+        public List<Invoice> getInvoicesByPatientId(Long patientId) {
+            return invoiceRepository.findByPatientId(patientId);
+        }
+
+        public List<Invoice> getAllInvoices() {
+            return invoiceRepository.findAll();
+        }
+
+        public Invoice updateInvoiceStatus(Long id, String status) {
+            Invoice invoice = invoiceRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Invoice not found."));
+            invoice.setStatus(status);
+            return invoiceRepository.save(invoice);
+        }
+
+        @KafkaListener(topics = "appointment-confirmed-events", groupId = "billing-group", containerFactory = "appointmentEventListenerContainerFactory")
+        
+        public void handleAppointmentEvent(AppointmentEvent event) {
+            System.out.println("Received Appointment Event in Billing Service: " + event);
+            if ("APPOINTMENT_CONFIRMED".equals(event.getEventType())) {
+                // Generate a random amount for the invoice
+                double amount = 50.0 + (new Random().nextDouble() * 150.0); // Between 50 and 200
+                createInvoice(event.getPatientId(), event.getAppointmentId(), amount);
+                System.out.println("Generated invoice for appointment ID: " + event.getAppointmentId());
+            } else if ("APPOINTMENT_CANCELLED".equals(event.getEventType())) {
+                // Find and cancel/adjust related invoices
+                invoiceRepository.findByAppointmentId(event.getAppointmentId()).forEach(invoice -> {
+                    invoice.setStatus("CANCELLED");
+                    invoiceRepository.save(invoice);
+                    System.out.println("Cancelled invoice " + invoice.getId() + " for cancelled appointment " + event.getAppointmentId());
+                });
+            }
+        }
+    }
+    

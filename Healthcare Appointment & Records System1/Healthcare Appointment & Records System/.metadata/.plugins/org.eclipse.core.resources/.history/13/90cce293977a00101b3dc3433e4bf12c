@@ -1,0 +1,20 @@
+spring.application.name=patient-service
+server.port=8081
+
+# Eureka Client
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+eureka.client.service-url.defaultZone=http://localhost:1111/eureka/
+eureka.instance.hostname=localhost
+
+# PostgreSQL Database
+spring.datasource.url=jdbc:postgresql://localhost:5432/patient-service-db
+spring.datasource.username=postgres
+spring.datasource.password=root
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA / Hibernate
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect

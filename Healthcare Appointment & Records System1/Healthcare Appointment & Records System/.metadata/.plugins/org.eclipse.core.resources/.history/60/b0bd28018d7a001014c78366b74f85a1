@@ -1,0 +1,22 @@
+package com.example.patient_service.controller;
+
+
+import com.example.patient_service.dto.PatientDTO;
+import com.example.patient_service.service.PatientService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController @RequestMapping("/api/patients")
+public class PatientController {
+  private final PatientService service;
+  public PatientController(PatientService service){this.service=service;}
+
+  @PostMapping public ResponseEntity<PatientDTO> create(@Valid @RequestBody PatientDTO dto){ return ResponseEntity.ok(service.create(dto));}
+  @GetMapping("/{id}") public ResponseEntity<PatientDTO> get(@PathVariable Long id){ return ResponseEntity.ok(service.get(id));}
+  @GetMapping public ResponseEntity<List<PatientDTO>> all(){ return ResponseEntity.ok(service.all());}
+  @PutMapping("/{id}") public ResponseEntity<PatientDTO> update(@PathVariable Long id, @Valid @RequestBody PatientDTO dto){ return ResponseEntity.ok(service.update(id,dto));}
+  @DeleteMapping("/{id}") public ResponseEntity<Void> delete(@PathVariable Long id){ service.delete(id); return ResponseEntity.noContent().build(); }
+}

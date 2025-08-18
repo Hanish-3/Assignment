@@ -1,0 +1,79 @@
+package com.example.patient_service.dto;
+
+import java.time.LocalDate;
+
+public record PatientRequestDTO(
+    String firstName,
+    String lastName,
+    LocalDate dateOfBirth,
+    String gender,
+    String address,
+    String phoneNumber,
+    String email,
+    String insuranceProvider,
+    String insuranceNumber
+) {
+
+	public String firstName() {
+		return firstName;
+	}
+
+	public String lastName() {
+		return lastName;
+	}
+
+	public LocalDate dateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public String gender() {
+		return gender;
+	}
+
+	public String address() {
+		return address;
+	}
+
+	public String phoneNumber() {
+		return phoneNumber;
+	}
+
+	public String email() {
+		return email;
+	}
+
+	public String insuranceProvider() {
+		return insuranceProvider;
+	}
+
+	public String insuranceNumber() {
+		return insuranceNumber;
+	}}
+
+public record PatientResponseDTO(
+    Long id,
+    String firstName,
+    String lastName,
+    String email,
+    String phoneNumber
+) {
+
+	public Long id() {
+		return id;
+	}
+
+	public String firstName() {
+		return firstName;
+	}
+
+	public String lastName() {
+		return lastName;
+	}
+
+	public String email() {
+		return email;
+	}
+
+	public String phoneNumber() {
+		return phoneNumber;
+	}}

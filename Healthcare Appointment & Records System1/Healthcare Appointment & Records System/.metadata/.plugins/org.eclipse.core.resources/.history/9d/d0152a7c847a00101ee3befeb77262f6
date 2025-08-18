@@ -1,0 +1,11 @@
+package com.example.patientservice.dto;
+
+import java.time.LocalDate;
+
+public class PatientRequestDTO {
+    private String firstName;
+    // ... Other fields
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    // ... Other getters/setters
+}

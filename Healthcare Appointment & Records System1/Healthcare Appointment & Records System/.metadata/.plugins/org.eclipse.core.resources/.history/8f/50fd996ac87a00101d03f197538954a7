@@ -1,0 +1,5 @@
+package com.example.medicalrecords_service.model;
+
+public class MedicalRecord {
+
+}

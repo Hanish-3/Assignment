@@ -1,0 +1,5 @@
+package com.example.medicalrecords_service.service;
+
+public class MedicalRecordService {
+
+}

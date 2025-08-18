@@ -1,0 +1,24 @@
+package com.example.patient_service.controller;
+
+import com.example.patient_service.dto.PatientRequestDTO;
+import com.example.patient_service.dto.PatientResponseDTO;
+import com.example.patient_service.service.PatientService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/patients")
+public class PatientController {
+    private final PatientService patientService;
+
+    public PatientController(PatientService patientService) {
+        this.patientService = patientService;
+    }
+
+    @PostMapping
+    public ResponseEntity<PatientResponseDTO> registerPatient(@RequestBody PatientRequestDTO request) {
+        return ResponseEntity.ok(patientService.registerPatient(request));
+    }
+
+    // Additional endpoints can be added here
+}

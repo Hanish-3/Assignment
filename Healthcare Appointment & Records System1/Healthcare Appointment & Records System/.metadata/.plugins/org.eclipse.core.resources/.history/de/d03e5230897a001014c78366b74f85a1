@@ -1,0 +1,43 @@
+package com.example.patient_service.model;
+
+import javax.persistence.*;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "patients")
+public class Patient {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private LocalDate dateOfBirth;
+    private String gender;
+    private String address;
+    private String phoneNumber;
+    private String email;
+    private String insuranceProvider;
+    private String insuranceNumber;
+
+    public Patient() {}
+
+    public Patient(String firstName, String lastName, LocalDate dateOfBirth, String gender, String address, String phoneNumber, String email, String insuranceProvider, String insuranceNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.address = address;
+        this phoneNumber = phoneNumber;
+        this.email = email;
+        this.insuranceProvider = insuranceProvider;
+        this.insuranceNumber = insuranceNumber;
+    }
+
+    // Getters
+    public Long getId() { return id; }
+    // ... Other getters
+    
+    // Setters
+    public void setId(Long id) { this.id = id; }
+    // ... Other setters
+}

@@ -1,0 +1,43 @@
+package com.example.patient_service.controller;
+
+import com.example.patient_service.dto.PatientDTO;
+import com.example.patient_service.service.PatientService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/patients")
+public class PatientController {
+
+    @Autowired
+    private PatientService patientService;
+
+    @PostMapping
+    public PatientDTO create(@Valid @RequestBody PatientDTO dto) {
+        return patientService.createPatient(dto);
+    }
+
+    @GetMapping
+    public List<PatientDTO> getAll() {
+        return patientService.getAllPatients();
+    }
+
+    @GetMapping("/{id}")
+    public PatientDTO getById(@PathVariable Long id) {
+        return patientService.getPatientById(id);
+    }
+
+    @PutMapping("/{id}")
+    public PatientDTO update(@PathVariable Long id, @Valid @RequestBody PatientDTO dto) {
+        return patientService.updatePatient(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Long id) {
+        patientService.deletePatient(id);
+        return "Patient deleted successfully!";
+    }
+}

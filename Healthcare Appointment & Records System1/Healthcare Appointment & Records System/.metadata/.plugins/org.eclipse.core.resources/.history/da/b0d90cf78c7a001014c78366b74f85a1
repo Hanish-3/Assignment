@@ -1,0 +1,45 @@
+package com.example.patient_service.service;
+
+import com.example.patient_service.dto.PatientDTO;
+import com.example.patient_service.model.Patient;
+import com.example.patient_service.repository.PatientRepository;
+
+
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class PatientService {
+  private final PatientRepository repo;
+  public PatientService(PatientRepository repo){this.repo=repo;}
+
+  public PatientDTO create(PatientDTO dto){
+    Patient p = map(dto);
+    p.setId(null);
+    return map(repo.save(p));
+  }
+  public PatientDTO get(Long id){return repo.findById(id).map(this::map).orElseThrow(()->new RuntimeException("Patient not found"));}
+  public List<PatientDTO> all(){return repo.findAll().stream().map(this::map).collect(Collectors.toList());}
+  public PatientDTO update(Long id, PatientDTO dto){
+    Patient p = repo.findById(id).orElseThrow(()->new RuntimeException("Patient not found"));
+    p.setFirstName(dto.getFirstName()); p.setLastName(dto.getLastName()); p.setEmail(dto.getEmail());
+    p.setPhone(dto.getPhone()); p.setInsuranceProvider(dto.getInsuranceProvider()); p.setInsuranceNumber(dto.getInsuranceNumber());
+    return map(repo.save(p));
+  }
+  public void delete(Long id){repo.deleteById(id);}
+
+  private PatientDTO map(Patient p){
+    PatientDTO d = new PatientDTO();
+    d.setId(p.getId()); d.setFirstName(p.getFirstName()); d.setLastName(p.getLastName());
+    d.setEmail(p.getEmail()); d.setPhone(p.getPhone());
+    d.setInsuranceProvider(p.getInsuranceProvider()); d.setInsuranceNumber(p.getInsuranceNumber());
+    return d;
+  }
+  private Patient map(PatientDTO d){
+    return new Patient(d.getId(), d.getFirstName(), d.getLastName(), d.getEmail(), d.getPhone(), d.getInsuranceProvider(), d.getInsuranceNumber());
+  }
+}
+
+

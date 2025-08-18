@@ -1,0 +1,83 @@
+package com.example.patient_service.service;
+
+import com.example.patient_service.dto.PatientDTO;
+import com.example.patient_service.model.Patient;
+import com.example.patient_service.repository.PatientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class PatientService {
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    // Convert DTO -> Entity
+    private Patient mapToEntity(PatientDTO dto) {
+        Patient p = new Patient();
+        p.setId(dto.getId());
+        p.setFirstName(dto.getFirstName());
+        p.setLastName(dto.getLastName());
+        p.setEmail(dto.getEmail());
+        p.setPhone(dto.getPhone());
+        p.setInsuranceProvider(dto.getInsuranceProvider());
+        p.setInsuranceNumber(dto.getInsuranceNumber());
+        return p;
+    }
+
+    // Convert Entity -> DTO
+    private PatientDTO mapToDTO(Patient p) {
+        PatientDTO dto = new PatientDTO();
+        dto.setId(p.getId());
+        dto.setFirstName(p.getFirstName());
+        dto.setLastName(p.getLastName());
+        dto.setEmail(p.getEmail());
+        dto.setPhone(p.getPhone());
+        dto.setInsuranceProvider(p.getInsuranceProvider());
+        dto.setInsuranceNumber(p.getInsuranceNumber());
+        return dto;
+    }
+
+    public PatientDTO createPatient(PatientDTO dto) {
+        if (patientRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Email already exists!");
+        }
+        Patient saved = patientRepository.save(mapToEntity(dto));
+        return mapToDTO(saved);
+    }
+
+    public List<PatientDTO> getAllPatients() {
+        return patientRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PatientDTO getPatientById(Long id) {
+        Optional<Patient> patient = patientRepository.findById(id);
+        return patient.map(this::mapToDTO)
+                      .orElseThrow(() -> new RuntimeException("Patient not found"));
+    }
+
+    public PatientDTO updatePatient(Long id, PatientDTO dto) {
+        Patient existing = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+        existing.setFirstName(dto.getFirstName());
+        existing.setLastName(dto.getLastName());
+        existing.setEmail(dto.getEmail());
+        existing.setPhone(dto.getPhone());
+        existing.setInsuranceProvider(dto.getInsuranceProvider());
+        existing.setInsuranceNumber(dto.getInsuranceNumber());
+        return mapToDTO(patientRepository.save(existing));
+    }
+
+    public void deletePatient(Long id) {
+        if (!patientRepository.existsById(id)) {
+            throw new RuntimeException("Patient not found");
+        }
+        patientRepository.deleteById(id);
+    }
+}
